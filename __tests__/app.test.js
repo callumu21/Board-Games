@@ -50,7 +50,7 @@ describe("/api/categories", () => {
 });
 
 describe("/api/reviews/:review_id", () => {
-  describe.only("GET", () => {
+  describe("GET", () => {
     test("returns a status code of 200", () => {
       return request(app).get("/api/reviews/1").expect(200);
     });
@@ -70,6 +70,16 @@ describe("/api/reviews/:review_id", () => {
               category: expect.any(String),
               owner: expect.any(String),
               created_at: expect.any(String),
+            })
+          );
+        });
+    });
+    test("returns an object with the comment_count property", () => {
+      return request(app)
+        .get("/api/reviews/1")
+        .then(({ body }) => {
+          expect(body.review).toEqual(
+            expect.objectContaining({
               comment_count: expect.any(Number),
             })
           );
