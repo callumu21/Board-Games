@@ -50,7 +50,7 @@ describe("/api/categories", () => {
 });
 
 describe("/api/reviews/:review_id", () => {
-  describe("GET", () => {
+  describe.only("GET", () => {
     test("returns a status code of 200", () => {
       return request(app).get("/api/reviews/1").expect(200);
     });
@@ -70,8 +70,23 @@ describe("/api/reviews/:review_id", () => {
               category: expect.any(String),
               owner: expect.any(String),
               created_at: expect.any(String),
+              comment_count: expect.any(Number),
             })
           );
+        });
+    });
+    test("returns the correct comment_count on a review that has comments", () => {
+      return request(app)
+        .get("/api/reviews/2")
+        .then(({ body }) => {
+          expect(body.review.comment_count).toBe(3);
+        });
+    });
+    test("returns the correct comment_count on a review that has zero comments", () => {
+      return request(app)
+        .get("/api/reviews/1")
+        .then(({ body }) => {
+          expect(body.review.comment_count).toBe(0);
         });
     });
     test("returns a 404 status code and an error message when a user searches for a valid ID that does not exist in the database", () => {
