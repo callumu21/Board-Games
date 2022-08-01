@@ -15,3 +15,22 @@ exports.selectReview = (review_id) => {
         : Promise.reject({ status: 404, msg: "Review does not exist" });
     });
 };
+
+exports.updateReview = (review_id, voteChange) => {
+  if (isNaN(voteChange)) {
+    return Promise.reject({
+      status: 400,
+      msg: "No valid vote change was included on the request body",
+    });
+  }
+  return db
+    .query(
+      "UPDATE reviews SET votes = votes + $1 WHERE review_id = $2 RETURNING *",
+      [voteChange, review_id]
+    )
+    .then(({ rows: review }) => {
+      return review.length > 0
+        ? review[0]
+        : Promise.reject({ status: 404, msg: "Review does not exist" });
+    });
+};
