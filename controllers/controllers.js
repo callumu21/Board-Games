@@ -2,6 +2,7 @@ const {
   fetchCategories,
   selectReview,
   updateReview,
+  fetchUsers,
 } = require("../models/models");
 
 exports.getCategories = (req, res, next) => {
@@ -31,4 +32,10 @@ exports.patchReview = (req, res, next) => {
     .catch((err) => {
       next(err);
     });
+};
+
+exports.getUsers = (req, res, next) => {
+  fetchUsers().then((users) => {
+    res.status(200).send({ users });
+  });
 };
