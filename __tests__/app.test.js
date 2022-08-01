@@ -87,7 +87,7 @@ describe("/api/reviews/:review_id", () => {
         .get("/api/reviews/myfavouritereview")
         .expect(400)
         .then(({ body }) => {
-          expect(body.msg).toBe("Please enter a valid ID");
+          expect(body.msg).toBe("Invalid PSQL input");
         });
     });
   });

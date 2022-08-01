@@ -1,5 +1,10 @@
 const express = require("express");
 const { getCategories, getReviewById } = require("./controllers/controllers");
+const {
+  handleCustomErrors,
+  handlePsqlErrors,
+  handleServerErrors,
+} = require("./errors");
 
 const app = express();
 
@@ -13,12 +18,8 @@ app.all("/*", (req, res) => {
 
 // Error-handling middleware functions
 
-app.use((err, req, res, next) => {
-  if (err.code === "22P02") {
-    res.status(400).send({ msg: "Please enter a valid ID" });
-  } else {
-    res.status(err.status).send({ msg: err.msg });
-  }
-});
+app.use(handleCustomErrors);
+app.use(handlePsqlErrors);
+app.use(handleServerErrors);
 
 module.exports = app;
