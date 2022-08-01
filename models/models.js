@@ -44,3 +44,14 @@ exports.updateReview = (review_id, voteChange) => {
 exports.fetchUsers = () => {
   return db.query("SELECT * FROM users").then(({ rows: users }) => users);
 };
+
+exports.fetchReviews = () => {
+  return db
+    .query(
+      `SELECT reviews.*, COUNT(comments.review_id)::int AS comment_count FROM reviews
+       LEFT OUTER JOIN comments ON comments.review_id = reviews.review_id
+       GROUP BY reviews.review_id
+       ORDER BY reviews.created_at DESC`
+    )
+    .then(({ rows: reviews }) => reviews);
+};

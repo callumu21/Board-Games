@@ -3,6 +3,7 @@ const {
   selectReview,
   updateReview,
   fetchUsers,
+  fetchReviews,
 } = require("../models/models");
 
 exports.getCategories = (req, res, next) => {
@@ -37,5 +38,11 @@ exports.patchReview = (req, res, next) => {
 exports.getUsers = (req, res, next) => {
   fetchUsers().then((users) => {
     res.status(200).send({ users });
+  });
+};
+
+exports.getReviews = (req, res, next) => {
+  fetchReviews().then((reviews) => {
+    res.status(200).send({ reviews });
   });
 };
