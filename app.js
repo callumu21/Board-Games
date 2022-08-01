@@ -1,5 +1,9 @@
 const express = require("express");
-const { getCategories, getReviewById } = require("./controllers/controllers");
+const {
+  getCategories,
+  getReviewById,
+  patchReview,
+} = require("./controllers/controllers");
 const {
   handleCustomErrors,
   handlePsqlErrors,
@@ -8,9 +12,12 @@ const {
 
 const app = express();
 
+app.use(express.json());
+
 app.get("/api/categories", getCategories);
 
 app.get("/api/reviews/:review_id", getReviewById);
+app.patch("/api/reviews/:review_id", patchReview);
 
 app.all("/*", (req, res) => {
   res.status(404).send({ msg: "Endpoint does not exist" });

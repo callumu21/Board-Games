@@ -91,4 +91,69 @@ describe("/api/reviews/:review_id", () => {
         });
     });
   });
+  describe("PATCH", () => {
+    test("returns a status code of 200", () => {
+      return request(app)
+        .patch("/api/reviews/1")
+        .send({ inc_votes: 1 })
+        .expect(200);
+    });
+    test("returns an object with the votes property increased by the correct amount", () => {
+      return request(app)
+        .get("/api/reviews/1")
+        .then(({ body: { review } }) => {
+          const { votes: beforeVotes } = review;
+          return request(app)
+            .patch("/api/reviews/1")
+            .send({ inc_votes: 1 })
+            .then(({ body: { review } }) => {
+              const { votes: newVotes } = review;
+              expect(newVotes).toBe(beforeVotes + 1);
+            });
+        });
+    });
+    test("returns an object with the votes property decreased by the correct amount", () => {
+      return request(app)
+        .get("/api/reviews/1")
+        .then(({ body: { review } }) => {
+          const { votes: beforeVotes } = review;
+          return request(app)
+            .patch("/api/reviews/1")
+            .send({ inc_votes: -30 })
+            .then(({ body: { review } }) => {
+              const { votes: newVotes } = review;
+              expect(newVotes).toBe(beforeVotes - 30);
+            });
+        });
+    });
+    test("returns a 400 status code and error message when the request body does not contain the correct key-value pair", () => {
+      return request(app)
+        .patch("/api/reviews/1")
+        .send({ votes: 3 })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe(
+            "No valid vote change was included on the request body"
+          );
+        });
+    });
+    test("returns a 404 status code and an error message when a user searches for a valid ID that does not exist in the database", () => {
+      return request(app)
+        .patch("/api/reviews/10000")
+        .send({ inc_votes: 3 })
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Review does not exist");
+        });
+    });
+    test("returns a 400 status code and an error message when a user searches for an invalid ID", () => {
+      return request(app)
+        .patch("/api/reviews/myfavouritereview")
+        .send({ inc_votes: 3 })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Invalid PSQL input");
+        });
+    });
+  });
 });
