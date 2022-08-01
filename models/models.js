@@ -34,3 +34,7 @@ exports.updateReview = (review_id, voteChange) => {
         : Promise.reject({ status: 404, msg: "Review does not exist" });
     });
 };
+
+exports.fetchUsers = () => {
+  return db.query("SELECT * FROM users").then(({ rows: users }) => users);
+};
