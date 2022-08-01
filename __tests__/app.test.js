@@ -137,6 +137,17 @@ describe("/api/reviews/:review_id", () => {
           );
         });
     });
+    test("returns a 400 status code and error message when the request body contains an invalid value against the inc_votes key", () => {
+      return request(app)
+        .patch("/api/reviews/banana")
+        .send({ inc_votes: "banana" })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe(
+            "No valid vote change was included on the request body"
+          );
+        });
+    });
     test("returns a 404 status code and an error message when a user searches for a valid ID that does not exist in the database", () => {
       return request(app)
         .patch("/api/reviews/10000")
