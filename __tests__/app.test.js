@@ -332,4 +332,116 @@ describe("/api/reviews/:review_id/comments", () => {
         });
     });
   });
+  describe("POST", () => {
+    test("returns a status code of 201", () => {
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send({ username: "mallionaire", body: "test_body" })
+        .expect(201);
+    });
+    test("returns a comment object on a key of object with valid request body and review_id", () => {
+      const input = { username: "mallionaire", body: "test_body" };
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send(input)
+        .then(({ body }) => {
+          expect(body.comment).toEqual(
+            expect.objectContaining({
+              comment_id: expect.any(Number),
+              votes: 0,
+              created_at: expect.any(String),
+              author: input.username,
+              body: input.body,
+              review_id: 1,
+            })
+          );
+        });
+    });
+    test("adds the new comment to the database when request body and review_id are valid", () => {
+      const input = { username: "mallionaire", body: "test_body" };
+      return request(app)
+        .get("/api/reviews/1/comments")
+        .then(({ body }) => {
+          const numberOfCommentsBefore = body.comments.length;
+          return request(app)
+            .post("/api/reviews/1/comments")
+            .send(input)
+            .then(({ body }) => {
+              return request(app)
+                .get("/api/reviews/1/comments")
+                .then(({ body }) => {
+                  const numberOfCommentsAfter = body.comments.length;
+                  expect(numberOfCommentsAfter).toBe(
+                    numberOfCommentsBefore + 1
+                  );
+                });
+            });
+        });
+    });
+    test("returns a status code of 400 and error message when passed an invalid review_id", () => {
+      return request(app)
+        .post("/api/reviews/banana/comments")
+        .send({ username: "mallionaire", body: "test_body" })
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Invalid PSQL input");
+        });
+    });
+    test("returns a status code of 404 and error message when passed a valid review_id not in the system", () => {
+      return request(app)
+        .post("/api/reviews/10000/comments")
+        .send({ username: "mallionaire", body: "test_body" })
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Review does not exist");
+        });
+    });
+    test("returns a status code of 400 and error message when passed an object missing the username key", () => {
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send({ body: "hello" })
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Missing valid author information");
+        });
+    });
+    test("returns a status code of 400 and error message when passed an object missing the body key", () => {
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send({ username: "mallionaire" })
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Missing valid body information");
+        });
+    });
+    test("returns a status code of 400 and error message when passed an object missing the body and username key", () => {
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send({})
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Missing valid body and author information");
+        });
+    });
+    test("returns a status code of 400 and error message when passed a username not present in the system", () => {
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send({ username: "test_username", body: "test_body" })
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe(
+            "Attempted to reference a foreign key not present in the database"
+          );
+        });
+    });
+    test("returns a status code of 400 and error message when passed an empty body", () => {
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send({ username: "mallionaire", body: "" })
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Missing valid body information");
+        });
+    });
+  });
 });

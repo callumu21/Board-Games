@@ -5,6 +5,7 @@ const {
   fetchUsers,
   fetchReviews,
   fetchCommentsByReviewId,
+  addCommentByReviewId,
 } = require("../models/models");
 
 exports.getCategories = (req, res, next) => {
@@ -53,6 +54,22 @@ exports.getCommentsByReviewId = (req, res, next) => {
   Promise.all([fetchCommentsByReviewId(review_id), selectReview(review_id)])
     .then(([comments]) => {
       res.status(200).send({ comments });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.postCommentByReviewId = (req, res, next) => {
+  const { review_id } = req.params;
+  const { body, username } = req.body;
+
+  Promise.all([
+    selectReview(review_id),
+    addCommentByReviewId(review_id, body, username),
+  ])
+    .then(([review, comment]) => {
+      res.status(201).send({ comment });
     })
     .catch((err) => {
       next(err);
