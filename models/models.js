@@ -1,4 +1,5 @@
 const db = require("../db/connection");
+const { checkExists } = require("../utils/checkExists");
 
 exports.fetchCategories = () => {
   return db.query("SELECT * FROM categories").then(({ rows: categories }) => {
@@ -82,7 +83,12 @@ exports.fetchReviews = (sort_by = "created_at", order = "desc", category) => {
 
   return db.query(queryString, categoryQuery).then(({ rows: reviews }) => {
     if (reviews.length === 0) {
-      return Promise.reject({ status: 404, msg: "Category does not exist" });
+      return checkExists("categories", "slug", category).then(() => {
+        return Promise.reject({
+          status: 404,
+          msg: "This category has no associated reviews",
+        });
+      });
     } else {
       return reviews;
     }

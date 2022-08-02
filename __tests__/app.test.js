@@ -329,12 +329,20 @@ describe("/api/reviews", () => {
           expect(body.msg).toBe("Invalid order query");
         });
     });
-    test("returns a 404 status code and error message when the user inputs a category query that doesn't exist", () => {
+    test("returns a 404 status code and error message when the user inputs a category query that doesn't exist in the database", () => {
       return request(app)
         .get("/api/reviews?category=123")
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).toBe("Category does not exist");
+          expect(body.msg).toBe("Resource not found in the database");
+        });
+    });
+    test("returns a 404 status code and error message when the user inputs a category query that exists but has no reviews", () => {
+      return request(app)
+        .get("/api/reviews?category=children's+games")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("This category has no associated reviews");
         });
     });
   });
