@@ -63,3 +63,28 @@ exports.fetchCommentsByReviewId = (review_id) => {
       return comments;
     });
 };
+
+exports.addCommentByReviewId = (review_id, body, author) => {
+  if (!body || !author) {
+    const missingContent =
+      !body && !author ? "body and author" : !body ? "body" : "author";
+
+    return Promise.reject({
+      status: 400,
+      msg: `Missing valid ${missingContent} information`,
+    });
+  }
+
+  return db
+    .query(
+      `INSERT INTO comments
+    (body, author, review_id)
+    VALUES
+    ($1, $2, $3)
+    RETURNING *`,
+      [body, author, review_id]
+    )
+    .then(({ rows: comment }) => {
+      return comment[0];
+    });
+};

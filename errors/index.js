@@ -11,6 +11,10 @@ exports.handlePsqlErrors = (err, req, res, next) => {
     res
       .status(400)
       .send({ msg: "Attempted to insert null into a not-null constraint" });
+  } else if (err.code === "23503") {
+    res.status(400).send({
+      msg: "Attempted to reference a foreign key not present in the database",
+    });
   } else next(err);
 };
 
