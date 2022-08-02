@@ -275,3 +275,61 @@ describe("/api/reviews", () => {
     });
   });
 });
+
+describe("/api/reviews/:review_id/comments", () => {
+  describe("GET", () => {
+    test("return a status code of 200", () => {
+      return request(app).get("/api/reviews/2/comments").expect(200);
+    });
+    test("return an array of all corresponding comments on the key of comments where review has comments", () => {
+      return request(app)
+        .get("/api/reviews/2/comments")
+        .then(({ body }) => {
+          expect(body.comments).toBeInstanceOf(Array);
+          expect(body.comments).toHaveLength(3);
+        });
+    });
+    test("return an empty array on the key of comments where review has no comments", () => {
+      return request(app)
+        .get("/api/reviews/1/comments")
+        .then(({ body }) => {
+          expect(body.comments).toBeInstanceOf(Array);
+          expect(body.comments).toHaveLength(0);
+        });
+    });
+    test("all returned comment objects have the correct properties", () => {
+      return request(app)
+        .get("/api/reviews/2/comments")
+        .then(({ body }) => {
+          body.comments.forEach((comment) => {
+            expect(comment).toEqual(
+              expect.objectContaining({
+                comment_id: expect.any(Number),
+                votes: expect.any(Number),
+                created_at: expect.any(String),
+                author: expect.any(String),
+                body: expect.any(String),
+                review_id: 2,
+              })
+            );
+          });
+        });
+    });
+    test("return a status code of 404 and error message when passed a valid id not matching a review in the database", () => {
+      return request(app)
+        .get("/api/reviews/100000/comments")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Review does not exist");
+        });
+    });
+    test("return a status code of 400 and error message when passed an invalid id", () => {
+      return request(app)
+        .get("/api/reviews/banana/comments")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Invalid PSQL input");
+        });
+    });
+  });
+});
