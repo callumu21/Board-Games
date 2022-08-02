@@ -1,5 +1,6 @@
 const request = require("supertest");
 const seed = require("../db/seeds/seed");
+const jestsorted = require("jest-sorted");
 const testData = require("../db/data/test-data");
 const app = require("../app");
 const db = require("../db/connection");
@@ -220,6 +221,56 @@ describe("/api/users", () => {
               })
             );
           });
+        });
+    });
+  });
+});
+
+describe("/api/reviews", () => {
+  describe("GET", () => {
+    test("returns a status code of 200", () => {
+      return request(app).get("/api/reviews").expect(200);
+    });
+    test("returns an array of review objects against a property of reviews", () => {
+      return request(app)
+        .get("/api/reviews")
+        .then(({ body }) => {
+          expect(body.reviews).toBeInstanceOf(Array);
+        });
+    });
+    test("returns all review objects in the database", () => {
+      return request(app)
+        .get("/api/reviews")
+        .then(({ body }) => {
+          expect(body.reviews).toHaveLength(13);
+        });
+    });
+    test("every review object contains the correct properties", () => {
+      return request(app)
+        .get("/api/reviews")
+        .then(({ body }) => {
+          body.reviews.forEach((review) => {
+            expect(review).toEqual(
+              expect.objectContaining({
+                owner: expect.any(String),
+                title: expect.any(String),
+                review_id: expect.any(Number),
+                category: expect.any(String),
+                review_img_url: expect.any(String),
+                created_at: expect.any(String),
+                votes: expect.any(Number),
+                designer: expect.any(String),
+                comment_count: expect.any(Number),
+              })
+            );
+          });
+        });
+    });
+    test("reviews are returned in descending order according to date", () => {
+      return request(app)
+        .get("/api/reviews")
+        .then(({ body }) => {
+          expect(body.reviews).toBeSortedBy("created_at", { descending: true });
         });
     });
   });
