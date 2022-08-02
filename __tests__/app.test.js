@@ -273,6 +273,70 @@ describe("/api/reviews", () => {
           expect(body.reviews).toBeSortedBy("created_at", { descending: true });
         });
     });
+    test("reviews are returned in ascending order according to date when order=asc is passed as a query", () => {
+      return request(app)
+        .get("/api/reviews?order=asc")
+        .then(({ body }) => {
+          expect(body.reviews).toBeSortedBy("created_at");
+        });
+    });
+    test("reviews are sorted by a custom, valid field with the sort_by query", () => {
+      return request(app)
+        .get("/api/reviews?sort_by=votes")
+        .then(({ body }) => {
+          expect(body.reviews).toBeSortedBy("votes", { descending: true });
+        });
+    });
+    test("reviews are sorted by a custom, valid field with the sort_by query and ordered in asc order with the order query", () => {
+      return request(app)
+        .get("/api/reviews?sort_by=votes&order=asc")
+        .then(({ body }) => {
+          expect(body.reviews).toBeSortedBy("votes");
+        });
+    });
+    test("reviews are filtered by a category query", () => {
+      return request(app)
+        .get("/api/reviews?category=euro+game")
+        .then(({ body }) => {
+          body.reviews.forEach((review) => {
+            expect(review.category).toBe("euro game");
+          });
+        });
+    });
+    test("returns correct data when all queries are used to filter, order and sort", () => {
+      return request(app)
+        .get("/api/reviews?sort_by=owner&order=asc&category=social+deduction")
+        .then(({ body }) => {
+          expect(body.reviews).toBeSortedBy("owner");
+          body.reviews.forEach((review) => {
+            expect(review.category).toBe("social deduction");
+          });
+        });
+    });
+    test("returns a 400 status code and error message when the user inputs an invalid sort_by query", () => {
+      return request(app)
+        .get("/api/reviews?sort_by=dogs")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Invalid sort_by query");
+        });
+    });
+    test("returns a 400 status code and error message when the user inputs an invalid order query", () => {
+      return request(app)
+        .get("/api/reviews?order=alphabetical")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Invalid order query");
+        });
+    });
+    test("returns a 404 status code and error message when the user inputs a category query that doesn't exist", () => {
+      return request(app)
+        .get("/api/reviews?category=123")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Category does not exist");
+        });
+    });
   });
 });
 
