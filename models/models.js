@@ -69,7 +69,7 @@ exports.fetchReviews = (sort_by = "created_at", order = "desc", category) => {
     return Promise.reject({ status: 400, msg: "Invalid order query" });
   }
 
-  let queryString = `SELECT reviews.*, COUNT(comments.review_id)::int AS comment_count FROM reviews
+  let queryString = `SELECT reviews.owner, reviews.title, reviews.review_id, reviews.category, reviews.review_img_url, reviews.created_at, reviews.votes, reviews.designer,  COUNT(comments.review_id)::int AS comment_count FROM reviews
                         LEFT OUTER JOIN comments ON comments.review_id = reviews.review_id `;
   const categoryQuery = [];
 
