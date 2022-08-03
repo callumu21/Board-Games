@@ -1,4 +1,5 @@
 const db = require("../db/connection");
+const { checkExists } = require("../utils/checkExists");
 
 exports.fetchCategories = () => {
   return db.query("SELECT * FROM categories").then(({ rows: categories }) => {
@@ -45,15 +46,53 @@ exports.fetchUsers = () => {
   return db.query("SELECT * FROM users").then(({ rows: users }) => users);
 };
 
-exports.fetchReviews = () => {
-  return db
-    .query(
-      `SELECT reviews.*, COUNT(comments.review_id)::int AS comment_count FROM reviews
-       LEFT OUTER JOIN comments ON comments.review_id = reviews.review_id
-       GROUP BY reviews.review_id
-       ORDER BY reviews.created_at DESC`
-    )
-    .then(({ rows: reviews }) => reviews);
+exports.fetchReviews = (sort_by = "created_at", order = "desc", category) => {
+  const validSortByQueries = [
+    "review_id",
+    "title",
+    "category",
+    "designer",
+    "owner",
+    "review_body",
+    "review_img_url",
+    "created_at",
+    "votes",
+    "comment_count",
+  ];
+  const validOrderQueries = ["asc", "desc"];
+
+  if (!validSortByQueries.includes(sort_by)) {
+    return Promise.reject({ status: 400, msg: "Invalid sort_by query" });
+  }
+
+  if (!validOrderQueries.includes(order)) {
+    return Promise.reject({ status: 400, msg: "Invalid order query" });
+  }
+
+  let queryString = `SELECT reviews.*, COUNT(comments.review_id)::int AS comment_count FROM reviews
+                        LEFT OUTER JOIN comments ON comments.review_id = reviews.review_id `;
+  const categoryQuery = [];
+
+  if (category) {
+    queryString += `WHERE reviews.category = $1`;
+    categoryQuery.push(category);
+  }
+
+  queryString += `GROUP BY reviews.review_id 
+                  ORDER BY reviews.${sort_by} ${order}`;
+
+  return db.query(queryString, categoryQuery).then(({ rows: reviews }) => {
+    if (reviews.length === 0) {
+      return checkExists("categories", "slug", category).then(() => {
+        return Promise.reject({
+          status: 404,
+          msg: "This category has no associated reviews",
+        });
+      });
+    } else {
+      return reviews;
+    }
+  });
 };
 
 exports.fetchCommentsByReviewId = (review_id) => {
