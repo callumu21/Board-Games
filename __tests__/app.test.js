@@ -573,15 +573,12 @@ describe("/api", () => {
       return request(app).get("/api").expect(200);
     });
     test("returns a JSON describing all endpoints", () => {
-      return request(app)
-        .get("/api")
-        .then(({ body }) => {
-          return fs
-            .readFile("./endpoints.json", "utf-8")
-            .then((endPointInfo) => {
-              expect(body.endPoints).toEqual(endPointInfo);
-            });
-        });
+      return Promise.all([
+        request(app).get("/api"),
+        fs.readFile("./endpoints.json", "utf-8"),
+      ]).then(([{ body }, endPointInfo]) => {
+        expect(body.endPoints).toEqual(endPointInfo);
+      });
     });
   });
 });
