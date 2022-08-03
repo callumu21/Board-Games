@@ -10,6 +10,8 @@ const {
   fetchEndpoints,
 } = require("../models/models");
 
+const api = require("../endpoints.json");
+
 exports.getCategories = (req, res, next) => {
   fetchCategories().then((categories) => {
     res.status(200).send({ categories });
@@ -95,7 +97,5 @@ exports.deleteCommentById = (req, res, next) => {
 };
 
 exports.getEndpoints = (req, res, next) => {
-  fetchEndpoints().then((endPoints) => {
-    res.status(200).send({ endPoints });
-  });
+  res.status(200).send({ endpoints: api });
 };
