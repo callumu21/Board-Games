@@ -7,6 +7,7 @@ const {
   getUsers,
   getCommentsByReviewId,
   postCommentByReviewId,
+  deleteCommentById,
 } = require("./controllers/controllers");
 const {
   handleCustomErrors,
@@ -29,6 +30,8 @@ app.get("/api/reviews/:review_id/comments", getCommentsByReviewId);
 app.post("/api/reviews/:review_id/comments", postCommentByReviewId);
 
 app.get("/api/users", getUsers);
+
+app.delete("/api/comments/:comment_id", deleteCommentById);
 
 app.all("/*", (req, res) => {
   res.status(404).send({ msg: "Endpoint does not exist" });
