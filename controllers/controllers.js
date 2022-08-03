@@ -7,6 +7,7 @@ const {
   fetchCommentsByReviewId,
   addCommentByReviewId,
   removeComment,
+  fetchEndpoints,
 } = require("../models/models");
 
 exports.getCategories = (req, res, next) => {
@@ -91,4 +92,10 @@ exports.deleteCommentById = (req, res, next) => {
     .catch((err) => {
       next(err);
     });
+};
+
+exports.getEndpoints = (req, res, next) => {
+  fetchEndpoints().then((endPoints) => {
+    res.status(200).send({ endPoints });
+  });
 };

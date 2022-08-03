@@ -1,6 +1,6 @@
 {
   "GET /api": {
-    "description": "serves up a json representation of all the available endpoints of the api"
+    "description": "serves up a JSON representation of all the available endpoints of the API"
   },
   "GET /api/categories": {
     "description": "serves an array of all categories",
@@ -20,15 +20,106 @@
     "exampleResponse": {
       "reviews": [
         {
+          "review_id": 1,
           "title": "One Night Ultimate Werewolf",
           "designer": "Akihisa Okui",
           "owner": "happyamy2016",
           "review_img_url": "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
           "category": "hidden-roles",
-          "created_at": 1610964101251,
-          "votes": 5
+          "created_at": "2021-01-18T10:00:20.514Z",
+          "votes": 5,
+          "comment_count": 20
         }
       ]
     }
+  },
+  "GET /api/reviews/:review_id": {
+    "description": "serves a single review object specified by review_id",
+    "queries": [],
+    "exampleResponse": {
+      "review": {
+        "review_id": 1,
+        "title": "One Night Ultimate Werewolf",
+        "designer": "Akihisa Okui",
+        "owner": "happyamy2016",
+        "review_img_url": "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+        "category": "hidden-roles",
+        "created_at": "2021-01-18T10:00:20.514Z",
+        "votes": 5,
+        "comment_count": 20
+      }
+    }
+  },
+  "PATCH /api/reviews/:review_id": {
+    "description": "serves a review object with the votes property amended by the specified amount",
+    "queries": [],
+    "exampleRequestBody": {
+      "inc_votes": 3
+    },
+    "exampleResponse": {
+      "review": {
+        "review_id": 1,
+        "title": "One Night Ultimate Werewolf",
+        "designer": "Akihisa Okui",
+        "owner": "happyamy2016",
+        "review_img_url": "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+        "category": "hidden-roles",
+        "created_at": "2021-01-18T10:00:20.514Z",
+        "votes": 8,
+        "comment_count": 20
+      }
+    }
+  },
+  "GET /api/reviews/:review_id/comments": {
+    "description": "serves an array of all comments on a specific review matching the review_id",
+    "queries": [],
+    "exampleResponse": {
+      "comments": [
+        {
+          "comment_id": 1,
+          "body": "I loved this game too!",
+          "review_id": 2,
+          "author": "bainesface",
+          "votes": 16,
+          "created_at": "2021-01-18T10:00:20.514Z"
+        }
+      ]
+    }
+  },
+  "POST /api/reviews/:review_id/comments": {
+    "description": "serves a new comment object added to the specified review",
+    "queries": [],
+    "exampleRequestBody": {
+      "username": "mallionaire",
+      "body": "This is amazing!"
+    },
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 2,
+        "body": "This is amazing!",
+        "review_id": 2,
+        "author": "mallionaire",
+        "votes": 0,
+        "created_at": "2021-01-18T10:00:20.514Z"
+      }
+    }
+  },
+  "GET /api/users": {
+    "description": "serves an array of all users",
+    "queries": [],
+    "exampleResponse": {
+      "users": [
+        {
+          "username": "mallionaire",
+          "name": "haz",
+          "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+        }
+      ]
+    }
+  },
+  "DELETE /api/comments/:comment:id": {
+    "description": "removes a specified comment from the database",
+    "queries": [],
+    "exampleResponse": {}
   }
 }

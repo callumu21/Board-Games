@@ -1,5 +1,6 @@
 const db = require("../db/connection");
 const { checkExists } = require("../utils/checkExists");
+const fs = require("fs/promises");
 
 exports.fetchCategories = () => {
   return db.query("SELECT * FROM categories").then(({ rows: categories }) => {
@@ -140,4 +141,10 @@ exports.removeComment = (comment_id) => {
         return;
       }
     });
+};
+
+exports.fetchEndpoints = () => {
+  return fs.readFile("./endpoints.json", "utf-8").then((data) => {
+    return data;
+  });
 };

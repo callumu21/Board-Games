@@ -1,6 +1,7 @@
 const request = require("supertest");
 const seed = require("../db/seeds/seed");
 const jestsorted = require("jest-sorted");
+const fs = require("fs/promises");
 const testData = require("../db/data/test-data");
 const app = require("../app");
 const db = require("../db/connection");
@@ -561,6 +562,25 @@ describe("/api/comments/:comment_id", () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.msg).toBe("Invalid PSQL input");
+        });
+    });
+  });
+});
+
+describe("/api", () => {
+  describe("GET", () => {
+    test("returns a status code of 200", () => {
+      return request(app).get("/api").expect(200);
+    });
+    test("returns a JSON describing all endpoints", () => {
+      return request(app)
+        .get("/api")
+        .then(({ body }) => {
+          return fs
+            .readFile("./endpoints.json", "utf-8")
+            .then((endPointInfo) => {
+              expect(body.endPoints).toEqual(endPointInfo);
+            });
         });
     });
   });
