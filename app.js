@@ -1,4 +1,5 @@
 const express = require("express");
+const fs = require("fs/promises");
 const {
   getCategories,
   getReviews,
@@ -20,7 +21,10 @@ const app = express();
 
 app.use(express.json());
 
-app.get("/api", getEndpoints);
+app.get("/api", async (req, res) => {
+  const endpoints = await fs.readFile("./endpoints.json", "utf-8");
+  res.status(200).send({ endpoints });
+});
 
 app.get("/api/categories", getCategories);
 

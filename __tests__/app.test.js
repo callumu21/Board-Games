@@ -577,7 +577,7 @@ describe("/api", () => {
         request(app).get("/api"),
         fs.readFile("./endpoints.json", "utf-8"),
       ]).then(([{ body }, endPointInfo]) => {
-        expect(body.endPoints).toEqual(endPointInfo);
+        expect(body.endpoints).toEqual(endPointInfo);
       });
     });
   });
