@@ -517,3 +517,51 @@ describe("/api/reviews/:review_id/comments", () => {
     });
   });
 });
+
+describe("/api/comments/:comment_id", () => {
+  describe("DELETE", () => {
+    test("returns a status code of 204 and no body content", () => {
+      return request(app)
+        .delete("/api/comments/1")
+        .expect(204)
+        .then(({ body }) => {
+          expect(body).toEqual({});
+        });
+    });
+    test("removes correct comment from the database", () => {
+      //This test works only with this test data. As we don't have a /api/comments API to make a get request to, this test manually checks that the review was deleted through its association with review_id 2
+      return request(app)
+        .get("/api/reviews/2/comments")
+        .then(({ body }) => {
+          const lengthBefore = body.comments.length;
+          return request(app)
+            .delete("/api/comments/1")
+            .expect(204)
+            .then(() => {
+              return request(app)
+                .get("/api/reviews/2/comments")
+                .then(({ body }) => {
+                  const lengthAfter = body.comments.length;
+                  expect(lengthAfter).toBe(lengthBefore - 1);
+                });
+            });
+        });
+    });
+    test("returns a status code of 404 and error code when passed a valid comment ID not in the database", () => {
+      return request(app)
+        .delete("/api/comments/10000")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("No comment found");
+        });
+    });
+    test("returns a status code of 400 and error code when passed an invalid ID", () => {
+      return request(app)
+        .delete("/api/comments/blorp")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Invalid PSQL input");
+        });
+    });
+  });
+});
