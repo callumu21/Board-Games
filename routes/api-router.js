@@ -3,7 +3,7 @@ const categoriesRouter = require("./categories-router");
 const reviewsRouter = require("./reviews-router");
 const commentsRouter = require("./comments-router");
 const usersRouter = require("./users-router");
-const { getEndpoints } = require("../controllers/controllers");
+const { getEndpoints } = require("../controllers/api-controllers");
 
 apiRouter.get("/", getEndpoints);
 
