@@ -18,7 +18,7 @@ exports.getReviews = async (req, res, next) => {
       limit,
       page
     );
-    res.status(200).send({ total_count, page: Number(page), reviews });
+    res.status(200).send({ total_count, page: Number(page) || 1, reviews });
   } catch (err) {
     next(err);
   }
