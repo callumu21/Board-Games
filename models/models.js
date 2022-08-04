@@ -142,9 +142,3 @@ exports.removeComment = (comment_id) => {
       }
     });
 };
-
-exports.fetchEndpoints = () => {
-  return fs.readFile("./endpoints.json", "utf-8").then((data) => {
-    return data;
-  });
-};

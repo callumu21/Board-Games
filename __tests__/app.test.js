@@ -1,7 +1,7 @@
 const request = require("supertest");
 const seed = require("../db/seeds/seed");
 const jestsorted = require("jest-sorted");
-const fs = require("fs/promises");
+const endpointJSON = require("../endpoints.json");
 const testData = require("../db/data/test-data");
 const app = require("../app");
 const db = require("../db/connection");
@@ -573,12 +573,11 @@ describe("/api", () => {
       return request(app).get("/api").expect(200);
     });
     test("returns a JSON describing all endpoints", () => {
-      return Promise.all([
-        request(app).get("/api"),
-        fs.readFile("./endpoints.json", "utf-8"),
-      ]).then(([{ body }, endPointInfo]) => {
-        expect(body.endPoints).toEqual(endPointInfo);
-      });
+      return request(app)
+        .get("/api")
+        .then(({ body }) => {
+          expect(body.endpoints).toEqual(endpointJSON);
+        });
     });
   });
 });
