@@ -10,6 +10,7 @@ const {
   removeComment,
   fetchUserByUsername,
   updateCommentById,
+  addReview,
 } = require("../models/models");
 
 exports.getCategories = (req, res, next) => {
@@ -117,6 +118,16 @@ exports.patchCommentById = (req, res, next) => {
   updateCommentById(comment_id, inc_votes)
     .then((comment) => {
       res.status(200).send({ comment });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.postReview = (req, res, next) => {
+  addReview(req.body)
+    .then((review) => {
+      res.status(201).send({ review });
     })
     .catch((err) => {
       next(err);

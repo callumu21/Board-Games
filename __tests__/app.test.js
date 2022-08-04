@@ -347,6 +347,115 @@ describe("/api/reviews", () => {
         });
     });
   });
+  describe("POST", () => {
+    test("returns a status of 201 when passed a valid request body", () => {
+      const input = {
+        owner: "mallionaire",
+        title: "That Pirate Game",
+        review_body: "test_body",
+        designer: "test_designer",
+        category: "dexterity",
+      };
+      return request(app).post("/api/reviews").send(input).expect(201);
+    });
+    test("returns a newly added review object when the request body is valid", () => {
+      const input = {
+        owner: "mallionaire",
+        title: "That Pirate Game",
+        review_body: "test_body",
+        designer: "test_designer",
+        category: "dexterity",
+      };
+      return request(app)
+        .post("/api/reviews")
+        .send(input)
+        .then(({ body: { review } }) => {
+          expect(review).toEqual(
+            expect.objectContaining({
+              review_id: 14,
+              title: "That Pirate Game",
+              category: "dexterity",
+              designer: "test_designer",
+              owner: "mallionaire",
+              review_body: "test_body",
+              review_img_url:
+                "https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg",
+              created_at: expect.any(String),
+              votes: 0,
+            })
+          );
+        });
+    });
+    test("returns a a 400 and error code when invalid owner is included on the request body", () => {
+      const input = {
+        owner: "not_in_the_database",
+        title: "That Pirate Game",
+        review_body: "test_body",
+        designer: "test_designer",
+        category: "dexterity",
+      };
+      return request(app)
+        .post("/api/reviews")
+        .send(input)
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe(
+            "Attempted to reference a foreign key not present in the database"
+          );
+        });
+    });
+    test("returns a a 400 and error code when invalid category is included on the request body", () => {
+      const input = {
+        owner: "mallionaire",
+        title: "That Pirate Game",
+        review_body: "test_body",
+        designer: "test_designer",
+        category: "not_a_valid_category",
+      };
+      return request(app)
+        .post("/api/reviews")
+        .send(input)
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe(
+            "Attempted to reference a foreign key not present in the database"
+          );
+        });
+    });
+    test("returns a a 400 and error code when body does not contain required information", () => {
+      const input = {
+        owner: "mallionaire",
+        review_body: "test_body",
+        designer: "test_designer",
+        category: "not_a_valid_category",
+      };
+      return request(app)
+        .post("/api/reviews")
+        .send(input)
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe(
+            "Attempted to insert null into a not-null constraint"
+          );
+        });
+    });
+    test("returns a a 400 and error code when body does not contain valid value against a required key", () => {
+      const input = {
+        owner: "mallionaire",
+        title: "That Pirate Game",
+        review_body: { body: "hello" },
+        designer: "test_designer",
+        category: "dexterity",
+      };
+      return request(app)
+        .post("/api/reviews")
+        .send(input)
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Values should only be strings");
+        });
+    });
+  });
 });
 
 describe("/api/reviews/:review_id/comments", () => {
