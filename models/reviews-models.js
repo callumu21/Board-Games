@@ -4,7 +4,9 @@ const { checkExists } = require("../utils/checkExists");
 exports.fetchReviews = async (
   sort_by = "created_at",
   order = "desc",
-  category
+  category,
+  limit = 10,
+  page = 1
 ) => {
   const validSortByQueries = [
     "review_id",
@@ -29,16 +31,31 @@ exports.fetchReviews = async (
   }
 
   let queryString = `SELECT reviews.owner, reviews.title, reviews.review_id, reviews.category, reviews.review_img_url, reviews.created_at, reviews.votes, reviews.designer,  COUNT(comments.review_id)::int AS comment_count FROM reviews
-                          LEFT OUTER JOIN comments ON comments.review_id = reviews.review_id `;
+                      LEFT OUTER JOIN comments ON comments.review_id = reviews.review_id `;
   const categoryQuery = [];
 
   if (category) {
-    queryString += `WHERE reviews.category = $1`;
+    queryString += `WHERE reviews.category = $1 `;
     categoryQuery.push(category);
   }
 
   queryString += `GROUP BY reviews.review_id 
-                    ORDER BY reviews.${sort_by} ${order}`;
+                  ORDER BY reviews.${sort_by} ${order} `;
+
+  const { rows: totalResults } = await db.query(queryString, categoryQuery);
+
+  const totalCount = totalResults.length;
+
+  if (isNaN(limit) || isNaN(page)) {
+    return Promise.reject({
+      status: 400,
+      msg: "Limit and page queries should be a number value",
+    });
+  } else {
+    const offset = (page - 1) * limit;
+    queryString += category ? `LIMIT $2 OFFSET $3` : `LIMIT $1 OFFSET $2`;
+    categoryQuery.push(limit, offset);
+  }
 
   const { rows: reviews } = await db.query(queryString, categoryQuery);
 
@@ -49,7 +66,7 @@ exports.fetchReviews = async (
       msg: "This category has no associated reviews",
     });
   } else {
-    return reviews;
+    return { reviews, totalCount };
   }
 };
 

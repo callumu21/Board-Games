@@ -239,11 +239,11 @@ describe("/api/reviews", () => {
           expect(body.reviews).toBeInstanceOf(Array);
         });
     });
-    test("returns all review objects in the database", () => {
+    test("returns 10 review objects in the database by default", () => {
       return request(app)
         .get("/api/reviews")
         .then(({ body }) => {
-          expect(body.reviews).toHaveLength(13);
+          expect(body.reviews).toHaveLength(10);
         });
     });
     test("every review object contains the correct properties", () => {
@@ -344,6 +344,50 @@ describe("/api/reviews", () => {
         .expect(404)
         .then(({ body }) => {
           expect(body.msg).toBe("This category has no associated reviews");
+        });
+    });
+    test("accepts a limit query as a number, returning the specified number of results", () => {
+      return request(app)
+        .get("/api/reviews?limit=5")
+        .expect(200)
+        .then(({ body: { reviews } }) => {
+          expect(reviews).toHaveLength(5);
+        });
+    });
+    test("accepts a page query which offsets the results by a certain amount", () => {
+      return request(app)
+        .get("/api/reviews?limit=10&p=2")
+        .expect(200)
+        .then(({ body: { reviews } }) => {
+          expect(reviews).toHaveLength(3);
+        });
+    });
+    test("returns 400 and an error message if limit or page query is not a number", () => {
+      return Promise.all([
+        request(app).get("/api/reviews?limit=banana&p=3"),
+        request(app).get("/api/reviews?limit=4&p=banana"),
+      ]).then(
+        ([
+          {
+            body: { msg: msg_1 },
+          },
+          {
+            body: { msg: msg_2 },
+          },
+        ]) => {
+          expect(msg_1).toBe("Limit and page queries should be a number value");
+          expect(msg_2).toBe("Limit and page queries should be a number value");
+        }
+      );
+    });
+    test("returns a total_count property on the results object with the total number of articles with filters and the current page number", () => {
+      return request(app)
+        .get("/api/reviews?p=1")
+        .then(({ body }) => {
+          expect(body.hasOwnProperty("total_count")).toBe(true);
+          expect(body.total_count).toBe(13);
+          expect(body.reviews).toHaveLength(10);
+          expect(body.page).toBe(1);
         });
     });
   });

@@ -8,11 +8,17 @@ const {
 } = require("../models/reviews-models");
 
 exports.getReviews = async (req, res, next) => {
-  const { sort_by, order, category } = req.query;
+  const { sort_by, order, category, limit, p: page } = req.query;
 
   try {
-    const reviews = await fetchReviews(sort_by, order, category);
-    res.status(200).send({ reviews });
+    const { reviews, totalCount: total_count } = await fetchReviews(
+      sort_by,
+      order,
+      category,
+      limit,
+      page
+    );
+    res.status(200).send({ total_count, page: Number(page), reviews });
   } catch (err) {
     next(err);
   }
