@@ -581,3 +581,46 @@ describe("/api", () => {
     });
   });
 });
+
+describe("/api/users/:username", () => {
+  describe("GET", () => {
+    test("returns a status code of 200", () => {
+      return request(app).get("/api/users/mallionaire").expect(200);
+    });
+    test("returns a user object with the correct properties", () => {
+      return request(app)
+        .get("/api/users/mallionaire")
+        .then(({ body: { user } }) => {
+          expect(user).toEqual(
+            expect.objectContaining({
+              username: "mallionaire",
+              avatar_url: expect.any(String),
+              name: expect.any(String),
+            })
+          );
+        });
+    });
+    test("returns the correct user object", () => {
+      return request(app)
+        .get("/api/users/mallionaire")
+        .then(({ body: { user } }) => {
+          expect(user).toEqual(
+            expect.objectContaining({
+              username: "mallionaire",
+              avatar_url:
+                "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+              name: "haz",
+            })
+          );
+        });
+    });
+    test("returns a 404 if user inputs a username not in the database", () => {
+      return request(app)
+        .get("/api/users/test_username")
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("User does not exist");
+        });
+    });
+  });
+});
