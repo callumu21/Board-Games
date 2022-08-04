@@ -8,6 +8,7 @@ const {
   fetchCommentsByReviewId,
   addCommentByReviewId,
   removeComment,
+  fetchUserByUsername,
 } = require("../models/models");
 
 exports.getCategories = (req, res, next) => {
@@ -96,4 +97,15 @@ exports.deleteCommentById = (req, res, next) => {
 
 exports.getEndpoints = (req, res, next) => {
   res.status(200).send({ endpoints });
+};
+
+exports.getUserByUsername = (req, res, next) => {
+  const { username } = req.params;
+  fetchUserByUsername(username)
+    .then((user) => {
+      res.status(200).send({ user });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };

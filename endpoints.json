@@ -117,6 +117,19 @@
       ]
     }
   },
+  "GET /api/users/:username": {
+    "description": "serves a user object matching the corresponding username",
+    "queries": [],
+    "exampleResponse": {
+      "user": [
+        {
+          "username": "mallionaire",
+          "name": "haz",
+          "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+        }
+      ]
+    }
+  },
   "DELETE /api/comments/:comment:id": {
     "description": "removes a specified comment from the database",
     "queries": [],

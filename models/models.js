@@ -142,3 +142,17 @@ exports.removeComment = (comment_id) => {
       }
     });
 };
+
+exports.fetchUserByUsername = (username) => {
+  return db
+    .query("SELECT username, avatar_url, name FROM users WHERE username = $1", [
+      username,
+    ])
+    .then(({ rows: user }) => {
+      if (user.length === 0) {
+        return Promise.reject({ status: 404, msg: "User does not exist" });
+      } else {
+        return user[0];
+      }
+    });
+};
