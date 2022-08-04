@@ -180,3 +180,31 @@ exports.updateCommentById = (comment_id, voteChange) => {
       }
     });
 };
+
+exports.addReview = (review) => {
+  const { owner, title, review_body, designer, category } = review;
+
+  const types = [owner, title, review_body, designer, category].map(
+    (value) => typeof value
+  );
+
+  if (types.includes("object")) {
+    return Promise.reject({
+      status: 400,
+      msg: "Values should only be strings",
+    });
+  }
+
+  return db
+    .query(
+      `INSERT INTO reviews
+    (owner, title, review_body, designer, category)
+    VALUES
+    ($1, $2, $3, $4, $5)
+    RETURNING *`,
+      [owner, title, review_body, designer, category]
+    )
+    .then(({ rows: review }) => {
+      return review[0];
+    });
+};

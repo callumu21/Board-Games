@@ -33,6 +33,29 @@
       ]
     }
   },
+  "POST /api/reviews": {
+    "description": "adds a review to the database and serves back the newly created review object",
+    "exampleRequestBody": {
+      "owner": "mallionaire",
+      "title": "That Pirate Game",
+      "review_body": "test_body",
+      "designer": "test_designer",
+      "category": "dexterity"
+    },
+    "exampleResponse": {
+      "review": {
+        "review_id": 14,
+        "title": "That Pirate Game",
+        "designer": "test_designer",
+        "owner": "mallionaire",
+        "review_body": "test_body",
+        "review_img_url": "https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg",
+        "category": "dexterity",
+        "created_at": "2021-01-18T10:00:20.514Z",
+        "votes": 0
+      }
+    }
+  },
   "GET /api/reviews/:review_id": {
     "description": "serves a single review object specified by review_id",
     "queries": [],
