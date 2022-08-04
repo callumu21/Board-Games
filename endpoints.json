@@ -16,8 +16,10 @@
   },
   "GET /api/reviews": {
     "description": "serves an array of all reviews",
-    "queries": ["category", "sort_by", "order"],
+    "queries": ["category", "sort_by", "order", "limit", "p"],
     "exampleResponse": {
+      "total_count": 24,
+      "page": 1,
       "reviews": [
         {
           "review_id": 1,
