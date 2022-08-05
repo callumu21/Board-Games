@@ -169,3 +169,16 @@ exports.addCommentByReviewId = async (review_id, body, author) => {
 
   return comment[0];
 };
+
+exports.removeReview = async (review_id) => {
+  const { rows: review } = await db.query(
+    "DELETE FROM reviews WHERE review_id = $1 RETURNING *",
+    [review_id]
+  );
+
+  if (review.length === 0) {
+    return Promise.reject({ status: 404, msg: "No review found" });
+  } else {
+    return review[0];
+  }
+};

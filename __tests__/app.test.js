@@ -241,6 +241,33 @@ describe("/api/reviews/:review_id", () => {
         });
     });
   });
+  describe("DELETE", () => {
+    test("deletes review from database and returns a status code of 204 and empty body", () => {
+      return request(app)
+        .delete("/api/reviews/1")
+        .expect(204)
+        .then(({ body }) => {
+          expect(body).toEqual({});
+          return request(app).get("/api/reviews/1").expect(404);
+        });
+    });
+    test("returns a status code of 404 and error code when passed a valid comment ID not in the database", () => {
+      return request(app)
+        .delete("/api/reviews/100000")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("No review found");
+        });
+    });
+    test("returns a status code of 400 and error code when passed an invalid ID", () => {
+      return request(app)
+        .delete("/api/reviews/blorp")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Invalid PSQL input");
+        });
+    });
+  });
 });
 
 describe("/api/users", () => {
