@@ -14,6 +14,20 @@
       ]
     }
   },
+  "POST /api/categories": {
+    "description": "adds a category to the database and serves back a new category object",
+    "queries": [],
+    "exampleRequest": {
+      "slug": "category name here",
+      "description": "description here"
+    },
+    "exampleResponse": {
+      "category": {
+        "slug": "category name here",
+        "description": "description here"
+      }
+    }
+  },
   "GET /api/reviews": {
     "description": "serves an array of all reviews",
     "queries": ["category", "sort_by", "order", "limit", "p"],
