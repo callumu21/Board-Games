@@ -110,7 +110,7 @@
     }
   },
   "DELETE /api/reviews/:review_id": {
-    "description": "removes a specified comment from the database",
+    "description": "removes a specified review from the database",
     "queries": [],
     "exampleResponse": {}
   },
