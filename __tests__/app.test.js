@@ -541,6 +541,30 @@ describe("/api/reviews/:review_id/comments", () => {
           });
         });
     });
+    test("returns a specified number of comments with a valid limit query", () => {
+      return request(app)
+        .get("/api/reviews/2/comments?limit=2")
+        .then(({ body }) => {
+          expect(body.comments).toBeInstanceOf(Array);
+          expect(body.comments).toHaveLength(2);
+        });
+    });
+    test("adds pagination if user determines what page of results they want to display", () => {
+      return request(app)
+        .get("/api/reviews/2/comments?limit=2&p=1")
+        .then(({ body }) => {
+          expect(body.comments).toBeInstanceOf(Array);
+          expect(body.comments).toHaveLength(2);
+        })
+        .then(() => {
+          return request(app)
+            .get("/api/reviews/2/comments?limit=2&p=2")
+            .then(({ body }) => {
+              expect(body.comments).toBeInstanceOf(Array);
+              expect(body.comments).toHaveLength(1);
+            });
+        });
+    });
     test("return a status code of 404 and error message when passed a valid id not matching a review in the database", () => {
       return request(app)
         .get("/api/reviews/100000/comments")
@@ -556,6 +580,24 @@ describe("/api/reviews/:review_id/comments", () => {
         .then(({ body }) => {
           expect(body.msg).toBe("Invalid PSQL input");
         });
+    });
+    test("returns 400 and an error message if limit or page query is not a number", () => {
+      return Promise.all([
+        request(app).get("/api/reviews/2/comments?limit=banana&p=3"),
+        request(app).get("/api/reviews/2/comments?limit=4&p=banana"),
+      ]).then(
+        ([
+          {
+            body: { msg: msg_1 },
+          },
+          {
+            body: { msg: msg_2 },
+          },
+        ]) => {
+          expect(msg_1).toBe("Limit and page queries should be a number value");
+          expect(msg_2).toBe("Limit and page queries should be a number value");
+        }
+      );
     });
   });
   describe("POST", () => {
