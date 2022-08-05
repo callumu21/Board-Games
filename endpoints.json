@@ -109,6 +109,11 @@
       }
     }
   },
+  "DELETE /api/reviews/:review_id": {
+    "description": "removes a specified comment from the database",
+    "queries": [],
+    "exampleResponse": {}
+  },
   "GET /api/reviews/:review_id/comments": {
     "description": "serves an array of all comments on a specific review matching the review_id",
     "queries": ["limit", "p"],
