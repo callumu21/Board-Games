@@ -58,10 +58,11 @@ exports.patchReview = async (req, res, next) => {
 
 exports.getCommentsByReviewId = async (req, res, next) => {
   const { review_id } = req.params;
+  const { limit, p: page } = req.query;
 
   try {
     const [comments] = await Promise.all([
-      fetchCommentsByReviewId(review_id),
+      fetchCommentsByReviewId(review_id, limit, page),
       selectReview(review_id),
     ]);
     res.status(200).send({ comments });

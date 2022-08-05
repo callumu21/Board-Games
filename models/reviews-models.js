@@ -127,11 +127,22 @@ exports.updateReview = async (review_id, voteChange) => {
     : Promise.reject({ status: 404, msg: "Review does not exist" });
 };
 
-exports.fetchCommentsByReviewId = async (review_id) => {
-  const { rows: comments } = await db.query(
-    "SELECT * FROM comments WHERE review_id = $1",
-    [review_id]
-  );
+exports.fetchCommentsByReviewId = async (review_id, limit = 10, page = 1) => {
+  let queryString = "SELECT * FROM comments WHERE review_id = $1";
+  const queryValues = [review_id];
+
+  if (isNaN(limit) || isNaN(page)) {
+    return Promise.reject({
+      status: 400,
+      msg: "Limit and page queries should be a number value",
+    });
+  } else {
+    const offset = (page - 1) * limit;
+    queryString += `LIMIT $2 OFFSET $3`;
+    queryValues.push(limit, offset);
+  }
+
+  const { rows: comments } = await db.query(queryString, queryValues);
 
   return comments;
 };
