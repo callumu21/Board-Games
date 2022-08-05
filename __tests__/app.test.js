@@ -49,6 +49,53 @@ describe("/api/categories", () => {
         });
     });
   });
+  describe("POST", () => {
+    test("returns a status code of 201 with a valid request body", () => {
+      return request(app)
+        .post("/api/categories")
+        .send({
+          slug: "category name here",
+          description: "description here",
+        })
+        .expect(201);
+    });
+    test("returns a newly created category object", () => {
+      return request(app)
+        .post("/api/categories")
+        .send({
+          slug: "category name here",
+          description: "description here",
+        })
+        .then(({ body }) => {
+          expect(body.category).toEqual({
+            slug: "category name here",
+            description: "description here",
+          });
+        });
+    });
+    test("returns a 400 and error message if request body is missing the slug", () => {
+      return request(app)
+        .post("/api/categories")
+        .send({
+          description: "description here",
+        })
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Category should include a valid slug");
+        });
+    });
+    test("returns a 400 and error message if request body is missing the description", () => {
+      return request(app)
+        .post("/api/categories")
+        .send({
+          slug: "category name here",
+        })
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Category should include a valid description");
+        });
+    });
+  });
 });
 
 describe("/api/reviews/:review_id", () => {

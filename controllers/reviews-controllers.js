@@ -76,10 +76,8 @@ exports.postCommentByReviewId = async (req, res, next) => {
   const { body, username } = req.body;
 
   try {
-    const [_, comment] = await Promise.all([
-      selectReview(review_id),
-      addCommentByReviewId(review_id, body, username),
-    ]);
+    await selectReview(review_id);
+    const comment = await addCommentByReviewId(review_id, body, username);
     res.status(201).send({ comment });
   } catch (err) {
     next(err);
