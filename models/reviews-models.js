@@ -143,8 +143,6 @@ exports.fetchCommentsByReviewId = async (review_id, limit = 10, page = 1) => {
     queryValues.push(limit, offset);
   }
 
-  console.log(queryString);
-
   const { rows: comments } = await db.query(queryString, queryValues);
 
   return comments;
