@@ -39,8 +39,14 @@ exports.fetchReviews = async (
     categoryQuery.push(category);
   }
 
+  let sortByString = sort_by;
+
+  if (sort_by !== "comment_count") {
+    sortByString = `reviews.${sort_by}`;
+  }
+
   queryString += `GROUP BY reviews.review_id 
-                  ORDER BY reviews.${sort_by} ${order} `;
+                  ORDER BY ${sortByString} ${order} `;
 
   const { rows: totalResults } = await db.query(queryString, categoryQuery);
 
