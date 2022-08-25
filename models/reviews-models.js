@@ -128,7 +128,8 @@ exports.updateReview = async (review_id, voteChange) => {
 };
 
 exports.fetchCommentsByReviewId = async (review_id, limit = 10, page = 1) => {
-  let queryString = "SELECT * FROM comments WHERE review_id = $1";
+  let queryString =
+    "SELECT * FROM comments WHERE review_id = $1 ORDER BY created_at DESC";
   const queryValues = [review_id];
 
   if (isNaN(limit) || isNaN(page)) {
@@ -138,9 +139,11 @@ exports.fetchCommentsByReviewId = async (review_id, limit = 10, page = 1) => {
     });
   } else {
     const offset = (page - 1) * limit;
-    queryString += `LIMIT $2 OFFSET $3`;
+    queryString += ` LIMIT $2 OFFSET $3`;
     queryValues.push(limit, offset);
   }
+
+  console.log(queryString);
 
   const { rows: comments } = await db.query(queryString, queryValues);
 
