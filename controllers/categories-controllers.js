@@ -1,9 +1,12 @@
 const { fetchCategories, addCategory } = require("../models/categories-models");
 
 exports.getCategories = async (req, res, next) => {
-  const categories = await fetchCategories();
-
-  res.status(200).send({ categories });
+  try {
+    const categories = await fetchCategories();
+    res.status(200).send({ categories });
+  } catch (err) {
+    next(err);
+  }
 };
 
 exports.postCategory = async (req, res, next) => {
