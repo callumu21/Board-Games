@@ -38,8 +38,8 @@ jobs:
     needs: [test-utils, test-app]
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy to Production
-        uses: johnbeynon/render-deploy-action
+      - name: Render Deploy Action
+        uses: johnbeynon/render-deploy-action@v0.0.8
         with:
           service-id: ${{ secrets.RENDER_SERVICE_ID }}
           api-key: ${{ secrets.RENDER_API_KEY }}
