@@ -17,7 +17,7 @@ jobs:
         run: npm run test-utils
 
   test-app:
-    runs-on: ubuntu-lates
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout and clone
         uses: actions/checkout@v2.4.2
