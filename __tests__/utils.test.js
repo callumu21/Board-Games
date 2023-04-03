@@ -3,8 +3,10 @@ const {
   createRef,
   formatComments,
 } = require("../db/seeds/utils");
-
+const db = require("../db/connection");
 const { checkExists } = require("../utils/checkExists");
+
+afterAll(() => db.end());
 
 describe("convertTimestampToDate", () => {
   test("returns a new object", () => {

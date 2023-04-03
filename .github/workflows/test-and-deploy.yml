@@ -6,7 +6,7 @@ on:
       - main
 jobs:
   test-utils:
-    name: Test
+    name: Test Utils
     runs-on: ubuntu-latest
     steps:
       - name: Checkout and clone
@@ -17,6 +17,7 @@ jobs:
         run: npm run test-utils
 
   test-app:
+    name: Test App
     runs-on: ubuntu-latest
     steps:
       - name: Checkout and clone
