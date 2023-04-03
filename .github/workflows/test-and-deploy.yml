@@ -32,3 +32,14 @@ jobs:
         run: npm install
       - name: Test App
         run: PGDATABASE=test_db PGUSER=test_user PGPASSWORD=password npm run test-app
+
+  deploy:
+    name: Deploy
+    needs: [test-utils, test-app]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Production
+        uses: johnbeynon/render-deploy-action
+        with:
+          service-id: ${{ secrets.RENDER_SERVICE_ID }}
+          api-key: ${{ secrets.RENDER_API_KEY }}
