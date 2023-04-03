@@ -6,14 +6,12 @@ exports.handleCustomErrors = (err, req, res, next) => {
 
 exports.handlePsqlErrors = (err, req, res, next) => {
   if (err.code === "22P02") {
-    res.status(400).send({ msg: "Input did not match expected data type" });
+    res.status(400).send({ msg: "Value does not match expected data type" });
   } else if (err.code === "23502") {
-    res
-      .status(400)
-      .send({ msg: "Attempted to insert null into a not-null constraint" });
+    res.status(400).send({ msg: "Expected value cannot be null" });
   } else if (err.code === "23503") {
     res.status(400).send({
-      msg: "Attempted to reference a foreign key not present in the database",
+      msg: "Required value does not exist",
     });
   } else next(err);
 };

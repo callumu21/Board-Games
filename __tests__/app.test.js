@@ -168,7 +168,7 @@ describe("/api/reviews/:review_id", () => {
       } = await request(app).get("/api/reviews/myfavouritereview");
 
       expect(status).toBe(400);
-      expect(msg).toBe("Input did not match expected data type");
+      expect(msg).toBe("Value does not match expected data type");
     });
   });
   describe("PATCH", () => {
@@ -245,7 +245,7 @@ describe("/api/reviews/:review_id", () => {
         .send({ inc_votes: 3 });
 
       expect(status).toBe(400);
-      expect(msg).toBe("Input did not match expected data type");
+      expect(msg).toBe("Value does not match expected data type");
     });
   });
   describe("DELETE", () => {
@@ -277,7 +277,7 @@ describe("/api/reviews/:review_id", () => {
       } = await request(app).delete("/api/reviews/blorp");
 
       expect(status).toBe(400);
-      expect(msg).toBe("Input did not match expected data type");
+      expect(msg).toBe("Value does not match expected data type");
     });
   });
 });
@@ -542,9 +542,7 @@ describe("/api/reviews", () => {
       } = await request(app).post("/api/reviews").send(input);
 
       expect(status).toBe(400);
-      expect(msg).toBe(
-        "Attempted to reference a foreign key not present in the database"
-      );
+      expect(msg).toBe("Required value does not exist");
     });
     test("returns a a 400 and error code when invalid category is included on the request body", async () => {
       const input = {
@@ -560,9 +558,7 @@ describe("/api/reviews", () => {
       } = await request(app).post("/api/reviews").send(input);
 
       expect(status).toBe(400);
-      expect(msg).toBe(
-        "Attempted to reference a foreign key not present in the database"
-      );
+      expect(msg).toBe("Required value does not exist");
     });
     test("returns a a 400 and error code when body does not contain required information", async () => {
       const input = {
@@ -577,7 +573,7 @@ describe("/api/reviews", () => {
       } = await request(app).post("/api/reviews").send(input);
 
       expect(status).toBe(400);
-      expect(msg).toBe("Attempted to insert null into a not-null constraint");
+      expect(msg).toBe("Expected value cannot be null");
     });
     test("returns a a 400 and error code when body does not contain valid value against a required key", async () => {
       const input = {
@@ -677,7 +673,7 @@ describe("/api/reviews/:review_id/comments", () => {
       } = await request(app).get("/api/reviews/banana/comments");
 
       expect(status).toBe(400);
-      expect(msg).toBe("Input did not match expected data type");
+      expect(msg).toBe("Value does not match expected data type");
     });
     test("returns 400 and an error message if page query is not a number", async () => {
       const {
@@ -751,7 +747,7 @@ describe("/api/reviews/:review_id/comments", () => {
         .send({ username: "mallionaire", body: "test_body" });
 
       expect(status).toBe(400);
-      expect(msg).toBe("Input did not match expected data type");
+      expect(msg).toBe("Value does not match expected data type");
     });
     test("returns a status code of 404 and error message when passed a valid review_id not in the system", async () => {
       const {
@@ -804,9 +800,7 @@ describe("/api/reviews/:review_id/comments", () => {
         .send({ username: "test_username", body: "test_body" });
 
       expect(status).toBe(400);
-      expect(msg).toBe(
-        "Attempted to reference a foreign key not present in the database"
-      );
+      expect(msg).toBe("Required value does not exist");
     });
     test("returns a status code of 400 and error message when passed an empty body", async () => {
       const {
@@ -865,7 +859,7 @@ describe("/api/comments/:comment_id", () => {
       } = await request(app).delete("/api/comments/blorp");
 
       expect(status).toBe(400);
-      expect(msg).toBe("Input did not match expected data type");
+      expect(msg).toBe("Value does not match expected data type");
     });
   });
   describe("PATCH", () => {
@@ -910,7 +904,7 @@ describe("/api/comments/:comment_id", () => {
         .send({ inc_votes: 4 });
 
       expect(status).toBe(400);
-      expect(msg).toBe("Input did not match expected data type");
+      expect(msg).toBe("Value does not match expected data type");
     });
     test("returns a 400 and error message when passed a request body with no inc_votes property", async () => {
       const {
