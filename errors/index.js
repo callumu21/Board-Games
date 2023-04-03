@@ -6,7 +6,7 @@ exports.handleCustomErrors = (err, req, res, next) => {
 
 exports.handlePsqlErrors = (err, req, res, next) => {
   if (err.code === "22P02") {
-    res.status(400).send({ msg: "Invalid PSQL input" });
+    res.status(400).send({ msg: "Input did not match expected data type" });
   } else if (err.code === "23502") {
     res
       .status(400)
