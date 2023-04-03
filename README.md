@@ -2,7 +2,7 @@
 
 ## You can find a live version of the app here:
 
-[https://board-games-reviews.cyclic.app/api](https://board-games-reviews.cyclic.app/api)
+[https://board-games-review-be.onrender.com/api](https://board-games-review-be.onrender.com/api)
 
 ---
 
