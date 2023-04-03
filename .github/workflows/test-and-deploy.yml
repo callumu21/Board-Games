@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout and clone
-        uses: actions/checkout@v2.4.2
+        uses: actions/checkout@v3
       - name: Setup PostgreSQL
         uses: Harmon758/postgresql-action@v1.0.0
         with:
