@@ -12,7 +12,7 @@ jobs:
       - name: Checkout and clone
         uses: actions/checkout@v3
       - name: Install dependencies
-        run: npm install
+        run: npm clean-install
       - name: Test Utils
         run: npm run test-utils
 
@@ -29,7 +29,7 @@ jobs:
           postgresql user: test_user
           postgresql password: password
       - name: Install dependencies
-        run: npm install
+        run: npm clean-install
       - name: Test App
         run: PGDATABASE=test_db PGUSER=test_user PGPASSWORD=password npm run test-app
 
